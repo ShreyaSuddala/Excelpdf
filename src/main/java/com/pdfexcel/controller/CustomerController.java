@@ -1,12 +1,13 @@
 package com.pdfexcel.controller;
-import com.pdfexcel.model.Customer;
+import com.pdfexcel.entity.Customer;
+import com.pdfexcel.model.CustomerDTO;
 import com.pdfexcel.repository.Customerrepo;
 import com.pdfexcel.service.CustomerInterface;
 import com.pdfexcel.service.ExcelService;
 import com.pdfexcel.service.PdfService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +19,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/customs")
 public class CustomerController {
+    public final CustomerInterface custservice;
+    public final Customerrepo custrepo;
+    public final ExcelService xlservice;
 
-    @Autowired
-    CustomerInterface  custservice;
-    @Autowired
-    Customerrepo custrepo;
-
-    @Autowired
-    ExcelService xlservice;
+    public CustomerController(CustomerInterface custservice, Customerrepo custrepo,
+                              ExcelService xlservice){
+        this.custservice = custservice;
+        this.custrepo = custrepo;
+        this.xlservice = xlservice;
+    }
 
     @GetMapping
     public List<Customer> getAll(){
@@ -33,13 +36,20 @@ public class CustomerController {
     }
 
     @PostMapping
-    public Customer saveCustomer(@RequestBody Customer customer) {
-        return this.custservice.saveCustomer(customer);
+    public ResponseEntity<Customer>createCustomer(@RequestBody CustomerDTO custDto){
+    Customer cust = new Customer();
+    cust.setCustomername(custDto.getCustomername());
+    cust.setCustomeraddress(custDto.getCustomeraddress());
+    cust.setMobilenumber(custDto.getMobilenumber());
+    Customer saveCustomer = this.custservice.saveCustomer(cust);
+    return new ResponseEntity<>(saveCustomer , HttpStatus.CREATED);
     }
 
+
+
     @GetMapping("/fetchpdf")
-    public ResponseEntity<InputStreamResource> customerReport() throws IOException{
-        List<Customer> custmers = (List<Customer>) custrepo.findAll();
+    public ResponseEntity<InputStreamResource> customerReport() {
+        List<Customer> custmers =  custrepo.findAll();
 
         ByteArrayInputStream biss = PdfService.customerPDFReport(custmers);
         HttpHeaders headers = new HttpHeaders();
@@ -51,10 +61,10 @@ public class CustomerController {
 
 
     @GetMapping("/fetchexcel")
-    public void  generateExceleReport(HttpServletResponse response) throws Exception{
+    public void  generateExceleReport(HttpServletResponse response) throws IOException{
         response.setContentType("application/octet-stream");
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment;filename=courses.xls";
+        String headerValue = "attachment;filename=customers.xls";
         response.setHeader(headerKey, headerValue);
         xlservice.generateExcel(response);
         response.flushBuffer();

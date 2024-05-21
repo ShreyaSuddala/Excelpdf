@@ -1,6 +1,6 @@
 package com.pdfexcel.service;
 
-import com.pdfexcel.model.Customer;
+import com.pdfexcel.entity.Customer;
 
 import java.util.List;
 

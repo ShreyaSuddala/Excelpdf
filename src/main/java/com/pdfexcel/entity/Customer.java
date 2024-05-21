@@ -1,4 +1,4 @@
-package com.pdfexcel.model;
+package com.pdfexcel.entity;
 
 import javax.persistence.*;
 

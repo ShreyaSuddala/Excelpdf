@@ -1,6 +1,6 @@
 package com.pdfexcel.repository;
 
-import com.pdfexcel.model.Customer;
+import com.pdfexcel.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
