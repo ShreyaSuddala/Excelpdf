@@ -78,4 +78,11 @@
 
 		</plugins>
 	</build>
+	<repositories>
+		<repository>
+			<id>sonarsource-repo</id>
+			<url>https://repox.sonarsource.com/maven2</url>
+		</repository>
+	</repositories>
+
 </project>
