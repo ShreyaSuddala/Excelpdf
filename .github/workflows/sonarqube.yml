@@ -1,36 +1,37 @@
-name: Sonar scan
-
+name: My Test Monorepo Project
 on:
   push:
     branches:
       - Shreya/xlpdf
-
+    paths:
+      - 'lambdas/test/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
 jobs:
-  build-and-analyze:
+  sonarcloudScan1:
+    name: SonarCloudScan1
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Source
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
+      - uses: actions/checkout@v3
         with:
-          distribution: 'temurin'
-          java-version: '11'
-
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Build Project
-        run: mvn clean install -DskipTests
-
-      - name: SonarQube Scan
-        run: mvn verify org.sonarsource.scanner.maven:sonar -Dsonar.projectKey=your_project_key -Dsonar.organization=shreyasuddala -Dsonar.host.url=https://sonarcloud.io
+          fetch-depth: 0
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: repo1/
+
+  sonarcloudScan2:
+    name: SonarCloudScan2
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: repo2/
