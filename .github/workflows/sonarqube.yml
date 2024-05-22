@@ -34,6 +34,6 @@ jobs:
         run: mvn sonar:sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_PROJECT_KEY: shreyasuddala
+          SONAR_PROJECT_KEY: ShreyaSuddala_Excelpdf1
           SONAR_ORGANIZATION: ShreyaSuddala
           SONAR_HOST_URL: https://sonarcloud.io
